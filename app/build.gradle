@@ -1,0 +1,175 @@
+
+// This section tells Gradle where to find everything it needs.
+buildscript {
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'me.tatarka:gradle-retrolambda:3.4.0'
+    }
+    repositories {
+        jcenter()
+    }
+
+}
+
+// This section tells Gradle where to find everything your app needs.
+repositories {
+    maven { url 'http://www.bugsense.com/gradle/' }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.nirbhaya.app.nirbhaya"
+        minSdkVersion 18
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // A lot of 3rd party libraries contain similar stuff.
+    packagingOptions {
+        exclude 'LICENSE.*'
+        exclude 'LICENSE.txt'
+        exclude 'NOTICE.*'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/notice.txt'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // One day, we'll change this to true...
+    lintOptions {
+        abortOnError false
+    }
+    //Enable data binding
+    dataBinding {
+        enabled = true
+    }
+}
+def supportLibVersion = '25.1.0'
+def playServicesVersion = '10.0.1'
+def okHttpVersion = '3.5.0'
+def retrofitVersion = '2.1.0'
+def daggerVersion = '2.5'
+def glideVersion = '3.7.0'
+def icepickVersion = '3.1.0'
+def leakCanaryVersion = '1.5'
+
+dependencies {
+
+    // AppCompat & design lib
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:percent:${supportLibVersion}"
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
+
+    // Google Play Services
+    compile "com.google.android.gms:play-services-base:$playServicesVersion"
+    compile "com.google.android.gms:play-services-location:$playServicesVersion"
+
+    //Reactive Rx
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+
+    //RxPermission
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.9.1@aar'
+
+    //RxLocation
+    compile 'pl.charmas.android:android-reactive-location:0.10@aar'
+
+    //RxStore
+    compile 'au.com.gridstone.rxstore:rxstore:5.0.2'
+    compile 'au.com.gridstone.rxstore:converter-gson:5.0.2'
+
+    // Dependency Injection
+    compile "com.google.dagger:dagger:$daggerVersion"
+    apt "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    // Needed for @Generated annotation
+    compile 'javax.annotation:jsr250-api:1.0'
+
+    //light weight view pager indicator
+    compile 'me.relex:circleindicator:1.2.1@aar'
+
+    // Log
+    compile 'com.jakewharton.timber:timber:4.1.2'
+
+    // LeakCanary
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+
+    // Android unit testing only dependencies
+    //JUnit
+    testCompile 'junit:junit:4.12'
+
+    // Robolectric + Support v4
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.robolectric:shadows-httpclient:3.0'
+
+    // Mockito
+    testCompile 'org.mockito:mockito-core:2.0.81-beta'
+
+    //AssertJ
+    testCompile "com.android.support:support-annotations:${supportLibVersion}"
+    testCompile('com.squareup.assertj:assertj-android:1.0.0') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    // Android Instrumentation testing only dependencies
+    androidTestCompile('com.android.support.test:runner:0.4') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    // Set this dependency to use JUnit 4 rules
+    androidTestCompile('com.android.support.test:rules:0.4') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    // Set this dependency to build and run Espresso tests
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    // Set this dependency to build and run UI Automator tests
+    androidTestCompile('com.android.support.test.uiautomator:uiautomator-v18:2.1.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+
+    configurations {
+        // to avoid double inclusion of support libraries
+        //    all*.exclude group: 'com.android.support', module: 'support-v4'
+        all*.exclude module: 'classworlds'
+        all*.exclude module: 'commons-logging'
+        all*.exclude module: 'httpclient'
+        all*.exclude module: 'maven-artifact'
+        all*.exclude module: 'maven-artifact-manager'
+        all*.exclude module: 'maven-error-diagnostics'
+        all*.exclude module: 'maven-model'
+        all*.exclude module: 'maven-project'
+        all*.exclude module: 'maven-settings'
+        all*.exclude module: 'plexus-container-default'
+        all*.exclude module: 'plexus-interpolation'
+        all*.exclude module: 'plexus-utils'
+        all*.exclude module: 'wagon-file'
+        all*.exclude module: 'wagon-http-lightweight'
+        all*.exclude module: 'wagon-provider-api'
+        all*.exclude module: 'javax.annotation-api'
+    }
+}
